@@ -19,154 +19,39 @@
     padding: 2rem;
   }
   .container { max-width: 680px; width: 100%; }
-  h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.4rem;
-    color: #fff;
-  }
+  h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.4rem; color: #fff; }
   h1 span { color: #a78bfa; }
-  .subtitle {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    color: #555;
-    margin-bottom: 3rem;
-    letter-spacing: 0.05em;
-  }
-  .upload-zone {
-    border: 1.5px dashed #2a2a2a;
-    border-radius: 16px;
-    padding: 3rem 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    background: #111;
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-  .upload-zone:hover, .upload-zone.dragover {
-    border-color: #a78bfa;
-    background: #15101f;
-  }
+  .subtitle { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: #555; margin-bottom: 3rem; letter-spacing: 0.05em; }
+  .upload-zone { border: 1.5px dashed #2a2a2a; border-radius: 16px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: #111; margin-bottom: 1.5rem; position: relative; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: #a78bfa; background: #15101f; }
   .upload-zone input { display: none; }
-  .upload-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    display: block;
-  }
-  .upload-text {
-    font-size: 1rem;
-    color: #888;
-    margin-bottom: 0.5rem;
-  }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+  .upload-text { font-size: 1rem; color: #888; margin-bottom: 0.5rem; }
   .upload-text strong { color: #a78bfa; cursor: pointer; }
-  .upload-hint {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: #444;
-  }
-  .file-selected {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: #a78bfa;
-    margin-top: 1rem;
-  }
-  .btn {
-    width: 100%;
-    padding: 1rem;
-    background: #a78bfa;
-    color: #0d0d0d;
-    border: none;
-    border-radius: 12px;
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    letter-spacing: 0.02em;
-  }
+  .upload-hint { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #444; }
+  .file-selected { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #a78bfa; margin-top: 1rem; }
+  .btn { width: 100%; padding: 1rem; background: #a78bfa; color: #0d0d0d; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; letter-spacing: 0.02em; }
   .btn:hover { background: #c4b5fd; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
-  .result {
-    margin-top: 2rem;
-    background: #111;
-    border: 1px solid #1e1e1e;
-    border-radius: 16px;
-    padding: 2rem;
-    display: none;
-  }
+  .result { margin-top: 2rem; background: #111; border: 1px solid #1e1e1e; border-radius: 16px; padding: 2rem; display: none; }
   .result.show { display: block; }
-  .result-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #1e1e1e;
-  }
-  .result-filename {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: #555;
-  }
-  .result-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #a78bfa;
-    background: #1a1025;
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-  }
-  .summary-text {
-    font-size: 0.95rem;
-    line-height: 1.8;
-    color: #ccc;
-    white-space: pre-wrap;
-  }
-  .loader {
-    display: none;
-    text-align: center;
-    padding: 2rem;
-  }
+  .result-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #1e1e1e; }
+  .result-filename { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #555; }
+  .result-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a78bfa; background: #1a1025; padding: 0.3rem 0.75rem; border-radius: 999px; }
+  .copy-btn { margin-left: auto; padding: 0.4rem 1rem; background: transparent; border: 1px solid #a78bfa; color: #a78bfa; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+  .copy-btn:hover { background: #a78bfa; color: #0d0d0d; }
+  .copy-btn.copied { border-color: #4ade80; color: #4ade80; }
+  .summary-text { font-size: 0.95rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
+  .loader { display: none; text-align: center; padding: 2rem; }
   .loader.show { display: block; }
-  .loader-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 1rem;
-  }
-  .loader-dots span {
-    width: 8px; height: 8px;
-    background: #a78bfa;
-    border-radius: 50%;
-    animation: bounce 1.2s infinite ease-in-out;
-  }
+  .loader-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 1rem; }
+  .loader-dots span { width: 8px; height: 8px; background: #a78bfa; border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
   .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce {
-    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-  .loader-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: #555;
-  }
-  .error {
-    margin-top: 1rem;
-    padding: 1rem 1.25rem;
-    background: #1a0f0f;
-    border: 1px solid #3a1515;
-    border-radius: 12px;
-    color: #f87171;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    display: none;
-  }
+  @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+  .loader-text { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #555; }
+  .error { margin-top: 1rem; padding: 1rem 1.25rem; background: #1a0f0f; border: 1px solid #3a1515; border-radius: 12px; color: #f87171; font-family: 'DM Mono', monospace; font-size: 0.8rem; display: none; }
   .error.show { display: block; }
 </style>
 </head>
@@ -188,9 +73,7 @@
   <div class="error" id="errorBox"></div>
 
   <div class="loader" id="loader">
-    <div class="loader-dots">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
     <p class="loader-text">analyzing your document...</p>
   </div>
 
@@ -198,6 +81,7 @@
     <div class="result-header">
       <span class="result-label">Summary</span>
       <span class="result-filename" id="resultFilename"></span>
+      <button class="copy-btn" id="copyBtn" onclick="copySummary()">Copy</button>
     </div>
     <p class="summary-text" id="summaryText"></p>
   </div>
@@ -244,7 +128,6 @@
     try {
       const res = await fetch('/summarize', { method: 'POST', body: formData });
       const data = await res.json();
-
       document.getElementById('loader').classList.remove('show');
 
       if (!res.ok) {
@@ -264,6 +147,19 @@
     }
 
     submitBtn.disabled = false;
+  }
+
+  function copySummary() {
+    const text = document.getElementById('summaryText').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
   }
 </script>
 </body>
