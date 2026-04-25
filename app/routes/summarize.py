@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from app.services.extractor import extract_text_pymupdf, extract_text_mistral_ocr, get_pdf_info
 from app.services.summarizer import summarize_text
 
@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 @router.post("/summarize")
-async def summarize(file: UploadFile = File(...)):
+async def summarize(file: UploadFile = File(...), language: str = Form(default="English")):
     # Validate file type
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
@@ -40,8 +40,8 @@ async def summarize(file: UploadFile = File(...)):
     pdf_info = get_pdf_info(pdf_bytes, file.filename, is_scanned)
 
     # Step 5: Summarize the extracted text using Groq
-    summary = summarize_text(text)
-    
+    summary = summarize_text(text, language)
+
     return {
         "filename": file.filename,
         "summary": summary,

@@ -7,17 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono:ital,wght@0,300;0,400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #0d0d0d;
-    color: #e8e8e0;
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
+  body { background: #0d0d0d; color: #e8e8e0; font-family: 'Syne', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
   .container { max-width: 680px; width: 100%; }
   h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.4rem; color: #fff; }
   h1 span { color: #a78bfa; }
@@ -30,6 +20,8 @@
   .upload-text strong { color: #a78bfa; cursor: pointer; }
   .upload-hint { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #444; }
   .file-selected { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #a78bfa; margin-top: 1rem; }
+  .language-select { width: 100%; padding: 0.75rem 1rem; background: #111; border: 1.5px solid #2a2a2a; border-radius: 12px; color: #e8e8e0; font-family: 'DM Mono', monospace; font-size: 0.85rem; margin-bottom: 1.5rem; cursor: pointer; transition: border-color 0.2s; }
+  .language-select:focus { outline: none; border-color: #a78bfa; }
   .btn { width: 100%; padding: 1rem; background: #a78bfa; color: #0d0d0d; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; letter-spacing: 0.02em; }
   .btn:hover { background: #c4b5fd; }
   .btn:active { transform: scale(0.98); }
@@ -70,6 +62,15 @@
     <p class="upload-hint">only .pdf files accepted</p>
     <p class="file-selected" id="fileName"></p>
   </div>
+
+  <select class="language-select" id="languageSelect">
+    <option value="English">🇬🇧 English</option>
+    <option value="Greek">🇬🇷 Greek</option>
+    <option value="Spanish">🇪🇸 Spanish</option>
+    <option value="French">🇫🇷 French</option>
+    <option value="German">🇩🇪 German</option>
+    <option value="Italian">🇮🇹 Italian</option>
+  </select>
 
   <button class="btn" id="submitBtn" disabled onclick="summarize()">Summarize</button>
 
@@ -132,6 +133,8 @@
 
     const formData = new FormData();
     formData.append('file', file);
+    const language = document.getElementById('languageSelect').value;
+    formData.append('language', language);
 
     try {
       const res = await fetch('/summarize', { method: 'POST', body: formData });
