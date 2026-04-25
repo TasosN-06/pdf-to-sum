@@ -35,6 +35,8 @@
   .copy-btn:hover { background: #a78bfa; color: #0d0d0d; }
   .copy-btn.copied { border-color: #4ade80; color: #4ade80; }
   .summary-text { font-size: 0.95rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
+  .cursor { display: inline-block; width: 2px; height: 1em; background: #a78bfa; margin-left: 2px; animation: blink 0.8s infinite; vertical-align: text-bottom; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   .loader { display: none; text-align: center; padding: 2rem; }
   .loader.show { display: block; }
   .loader-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 1rem; }
@@ -129,6 +131,7 @@
     document.getElementById('result').classList.remove('show');
     document.getElementById('errorBox').classList.remove('show');
     document.getElementById('loader').classList.add('show');
+    document.getElementById('summaryText').textContent = '';
     submitBtn.disabled = true;
 
     const formData = new FormData();
@@ -138,20 +141,52 @@
 
     try {
       const res = await fetch('/summarize', { method: 'POST', body: formData });
-      const data = await res.json();
-      document.getElementById('loader').classList.remove('show');
 
       if (!res.ok) {
+        const data = await res.json();
+        document.getElementById('loader').classList.remove('show');
         const errorBox = document.getElementById('errorBox');
         errorBox.textContent = '✗ ' + (data.detail || 'Something went wrong.');
         errorBox.classList.add('show');
-      } else {
-        document.getElementById('resultFilename').textContent = data.filename;
-        document.getElementById('summaryText').textContent = data.summary;
-        document.getElementById('infoPages').textContent = data.info.pages + ' pages';
-        document.getElementById('infoSize').textContent = data.info.size;
-        document.getElementById('infoType').textContent = data.info.type;
-        document.getElementById('result').classList.add('show');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      // Add blinking cursor
+      const summaryEl = document.getElementById('summaryText');
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const json = JSON.parse(line.slice(6));
+
+          if (json.type === 'info') {
+            document.getElementById('loader').classList.remove('show');
+            document.getElementById('resultFilename').textContent = json.filename;
+            document.getElementById('infoPages').textContent = json.data.pages + ' pages';
+            document.getElementById('infoSize').textContent = json.data.size;
+            document.getElementById('infoType').textContent = json.data.type;
+            document.getElementById('result').classList.add('show');
+            summaryEl.appendChild(cursor);
+          } else if (json.type === 'token') {
+            summaryEl.insertBefore(document.createTextNode(json.data), cursor);
+          } else if (json.type === 'done') {
+            cursor.remove();
+          }
+        }
       }
     } catch (err) {
       document.getElementById('loader').classList.remove('show');

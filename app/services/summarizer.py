@@ -20,18 +20,20 @@ def chunk_text(text: str) -> list[str]:
     ]
 
 
-def summarize_text(text: str, language: str = "English") -> str:
-    """Summarize text using chunking for large documents."""
+async def summarize_text_stream(text: str, language: str = "English"):
+    """Stream summary tokens, with chunking for large texts."""
     words = text.split()
 
-    # If text is small enough, summarize directly
+    # If text is small enough, stream directly
     if len(words) <= CHUNK_SIZE:
         prompt = get_summarize_prompt(language)
         chain = prompt | llm
-        response = chain.invoke({"text": text})
-        return response.content
+        async for chunk in chain.astream({"text": text}):
+            if chunk.content:
+                yield chunk.content
+        return
 
-    # For large texts: chunk -> summarize each -> final summary
+    # For large texts: chunk -> summarize each -> stream final summary
     chunks = chunk_text(text)
     chunk_summaries = []
 
@@ -41,9 +43,10 @@ def summarize_text(text: str, language: str = "English") -> str:
         response = chain.invoke({"text": chunk})
         chunk_summaries.append(f"Part {i+1}:\n{response.content}")
 
-    # Final summary from all chunk summaries
+    # Stream the final summary
     combined = "\n\n".join(chunk_summaries)
     final_prompt = get_summarize_prompt(language)
     final_chain = final_prompt | llm
-    final_response = final_chain.invoke({"text": combined})
-    return final_response.content
+    async for chunk in final_chain.astream({"text": combined}):
+        if chunk.content:
+            yield chunk.content
