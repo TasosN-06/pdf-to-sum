@@ -24,3 +24,17 @@ def extract_text_mistral_ocr(pdf_bytes: bytes, filename: str) -> str:
         },
     )
     return "\n\n".join(page.markdown for page in ocr_response.pages)
+
+def get_pdf_info(pdf_bytes: bytes, filename: str, is_scanned: bool) -> dict:
+    """Extract basic info from the PDF."""
+    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+        num_pages = len(doc)
+    
+    size_kb = round(len(pdf_bytes) / 1024, 1)
+    size_str = f"{size_kb} KB" if size_kb < 1024 else f"{round(size_kb/1024, 1)} MB"
+    
+    return {
+        "pages": num_pages,
+        "size": size_str,
+        "type": "Scanned PDF" if is_scanned else "Text PDF"
+    }

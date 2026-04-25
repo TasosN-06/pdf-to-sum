@@ -53,6 +53,9 @@
   .loader-text { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #555; }
   .error { margin-top: 1rem; padding: 1rem 1.25rem; background: #1a0f0f; border: 1px solid #3a1515; border-radius: 12px; color: #f87171; font-family: 'DM Mono', monospace; font-size: 0.8rem; display: none; }
   .error.show { display: block; }
+  .pdf-info { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .info-badge { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #888; background: #161616; border: 1px solid #2a2a2a; padding: 0.4rem 0.75rem; border-radius: 8px; }
+  .info-badge span { color: #a78bfa; margin-right: 0.4rem; }
 </style>
 </head>
 <body>
@@ -78,6 +81,11 @@
   </div>
 
   <div class="result" id="result">
+    <div class="pdf-info" id="pdfInfo">
+      <div class="info-badge"><span>📄</span><span id="infoPages"></span></div>
+      <div class="info-badge"><span>💾</span><span id="infoSize"></span></div>
+      <div class="info-badge"><span>🔤</span><span id="infoType"></span></div>
+    </div>
     <div class="result-header">
       <span class="result-label">Summary</span>
       <span class="result-filename" id="resultFilename"></span>
@@ -137,6 +145,9 @@
       } else {
         document.getElementById('resultFilename').textContent = data.filename;
         document.getElementById('summaryText').textContent = data.summary;
+        document.getElementById('infoPages').textContent = data.info.pages + ' pages';
+        document.getElementById('infoSize').textContent = data.info.size;
+        document.getElementById('infoType').textContent = data.info.type;
         document.getElementById('result').classList.add('show');
       }
     } catch (err) {
