@@ -8,7 +8,11 @@ router = APIRouter()
 
 
 @router.post("/summarize")
-async def summarize(file: UploadFile = File(...), language: str = Form(default="English")):
+async def summarize(
+    file: UploadFile = File(...),
+    language: str = Form(default="English"),
+    style: str = Form(default="bullet")
+):
     # Validate file type
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
@@ -37,13 +41,9 @@ async def summarize(file: UploadFile = File(...), language: str = Form(default="
 
     # Step 5: Stream the summary
     async def generate():
-        # First send the PDF info
         yield f"data: {json.dumps({'type': 'info', 'data': pdf_info, 'filename': file.filename})}\n\n"
-
-        # Then stream the summary tokens
-        async for token in summarize_text_stream(text, language):
+        async for token in summarize_text_stream(text, language, style):
             yield f"data: {json.dumps({'type': 'token', 'data': token})}\n\n"
-
         yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")

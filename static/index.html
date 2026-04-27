@@ -20,7 +20,8 @@
   .upload-text strong { color: #a78bfa; cursor: pointer; }
   .upload-hint { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #444; }
   .file-selected { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #a78bfa; margin-top: 1rem; }
-  .language-select { width: 100%; padding: 0.75rem 1rem; background: #111; border: 1.5px solid #2a2a2a; border-radius: 12px; color: #e8e8e0; font-family: 'DM Mono', monospace; font-size: 0.85rem; margin-bottom: 1.5rem; cursor: pointer; transition: border-color 0.2s; }
+  .selects-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .language-select { width: 100%; padding: 0.75rem 1rem; background: #111; border: 1.5px solid #2a2a2a; border-radius: 12px; color: #e8e8e0; font-family: 'DM Mono', monospace; font-size: 0.85rem; cursor: pointer; transition: border-color 0.2s; }
   .language-select:focus { outline: none; border-color: #a78bfa; }
   .btn { width: 100%; padding: 1rem; background: #a78bfa; color: #0d0d0d; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; letter-spacing: 0.02em; }
   .btn:hover { background: #c4b5fd; }
@@ -65,14 +66,23 @@
     <p class="file-selected" id="fileName"></p>
   </div>
 
-  <select class="language-select" id="languageSelect">
-    <option value="English">🇬🇧 English</option>
-    <option value="Greek">🇬🇷 Greek</option>
-    <option value="Spanish">🇪🇸 Spanish</option>
-    <option value="French">🇫🇷 French</option>
-    <option value="German">🇩🇪 German</option>
-    <option value="Italian">🇮🇹 Italian</option>
-  </select>
+  <div class="selects-row">
+    <select class="language-select" id="languageSelect">
+      <option value="English">🇬🇧 English</option>
+      <option value="Greek">🇬🇷 Greek</option>
+      <option value="Spanish">🇪🇸 Spanish</option>
+      <option value="French">🇫🇷 French</option>
+      <option value="German">🇩🇪 German</option>
+      <option value="Italian">🇮🇹 Italian</option>
+    </select>
+
+    <select class="language-select" id="styleSelect">
+      <option value="bullet">📋 Bullet Points</option>
+      <option value="paragraph">📝 Paragraph</option>
+      <option value="executive">💼 Executive Summary</option>
+      <option value="eli5">🧒 ELI5</option>
+    </select>
+  </div>
 
   <button class="btn" id="submitBtn" disabled onclick="summarize()">Summarize</button>
 
@@ -93,6 +103,7 @@
       <span class="result-label">Summary</span>
       <span class="result-filename" id="resultFilename"></span>
       <button class="copy-btn" id="copyBtn" onclick="copySummary()">Copy</button>
+      <button class="copy-btn" onclick="downloadSummary()">Download</button>
     </div>
     <p class="summary-text" id="summaryText"></p>
   </div>
@@ -138,6 +149,8 @@
     formData.append('file', file);
     const language = document.getElementById('languageSelect').value;
     formData.append('language', language);
+    const style = document.getElementById('styleSelect').value;
+    formData.append('style', style);
 
     try {
       const res = await fetch('/summarize', { method: 'POST', body: formData });
@@ -156,7 +169,6 @@
       const decoder = new TextDecoder();
       let buffer = '';
 
-      // Add blinking cursor
       const summaryEl = document.getElementById('summaryText');
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
@@ -209,6 +221,18 @@
         btn.classList.remove('copied');
       }, 2000);
     });
+  }
+
+  function downloadSummary() {
+    const text = document.getElementById('summaryText').textContent;
+    const filename = document.getElementById('resultFilename').textContent;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.replace('.pdf', '_summary.txt');
+    a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 </body>
