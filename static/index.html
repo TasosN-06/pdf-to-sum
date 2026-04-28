@@ -56,6 +56,12 @@
   h1 span { color: var(--accent); }
   .subtitle { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.75rem; letter-spacing: 0.05em; }
 
+  /* ── USER BAR ── */
+  .user-bar { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1rem; }
+  .user-email { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-dim); }
+  .logout-btn { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--error); background: none; border: 1px solid var(--error-border); padding: 0.3rem 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .logout-btn:hover { background: var(--error-bg); }
+
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; margin-bottom: 1.25rem; animation: fadeUp 0.6s ease both; }
   .card:nth-child(2) { animation-delay: 0.05s; }
   .card:nth-child(3) { animation-delay: 0.1s; }
@@ -166,6 +172,10 @@
     <span class="header-tag">// AI-powered document analysis</span>
     <h1>PDF <span>Summarizer</span></h1>
     <p class="subtitle">powered by groq · mistral ocr · langchain</p>
+    <div class="user-bar">
+      <span class="user-email" id="userEmail"></span>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
   </div>
 
   <div class="card">
@@ -265,6 +275,12 @@
 </div>
 
 <script>
+  // ── AUTH CHECK ──
+  const token = localStorage.getItem('access_token');
+  const userEmail = localStorage.getItem('user_email');
+  if (!token) window.location.href = '/auth';
+
+  // ── STATE ──
   const history = [];
   let currentSummary = '';
   let currentFilename = '';
@@ -274,6 +290,9 @@
   const submitBtn = document.getElementById('submitBtn');
   const structuredBtn = document.getElementById('structuredBtn');
   const fileName = document.getElementById('fileName');
+
+  // Εμφάνισε το email στο header
+  document.getElementById('userEmail').textContent = userEmail || '';
 
   fileInput.addEventListener('change', () => {
     if (fileInput.files[0]) setFile(fileInput.files[0]);
@@ -568,6 +587,12 @@
     const box = document.getElementById('errorBox');
     box.textContent = '✗ ' + msg;
     box.classList.add('show');
+  }
+
+  function logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_email');
+    window.location.href = '/auth';
   }
 </script>
 </body>
