@@ -21,3 +21,7 @@ def auth_page():
 
 app.include_router(router)
 app.include_router(auth_router)
+
+@app.get("/confirmed")
+def confirmed_page():
+    return FileResponse("static/confirmed.html")

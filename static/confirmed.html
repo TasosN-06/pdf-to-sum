@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Confirmed!</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono:ital,wght@0,300;0,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #0d0d0d; --surface: #111; --border: #2a2a2a; --accent: #a78bfa; --accent-dim: #1a1025; --text: #e8e8e0; --text-dim: #444; --success: #4ade80; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .container { max-width: 420px; width: 100%; text-align: center; position: relative; z-index: 1; animation: fadeUp 0.5s ease both; }
+  .icon { font-size: 4rem; margin-bottom: 1.5rem; display: block; }
+  h1 { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
+  h1 span { color: var(--success); }
+  p { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 2rem; line-height: 1.6; }
+  .btn { display: inline-block; padding: 0.9rem 2rem; background: var(--accent); color: #0d0d0d; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+  .btn:hover { background: #c4b5fd; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <span class="icon">✅</span>
+  <h1>Email <span>Confirmed!</span></h1>
+  <p>Your account has been successfully verified.<br>You can now sign in and start summarizing your PDFs.</p>
+  <a href="/auth" class="btn">Go to Sign In →</a>
+</div>
+<script>
+  // Auto redirect after 3 seconds
+  setTimeout(() => window.location.href = '/auth', 3000);
+</script>
+</body>
+</html>
