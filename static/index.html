@@ -7,119 +7,276 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono:ital,wght@0,300;0,400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0d0d0d; color: #e8e8e0; font-family: 'Syne', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-  .container { max-width: 680px; width: 100%; }
-  h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.4rem; color: #fff; }
-  h1 span { color: #a78bfa; }
-  .subtitle { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: #555; margin-bottom: 3rem; letter-spacing: 0.05em; }
-  .upload-zone { border: 1.5px dashed #2a2a2a; border-radius: 16px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: #111; margin-bottom: 1.5rem; position: relative; }
-  .upload-zone:hover, .upload-zone.dragover { border-color: #a78bfa; background: #15101f; }
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #111;
+    --surface2: #161616;
+    --border: #2a2a2a;
+    --accent: #a78bfa;
+    --accent-light: #c4b5fd;
+    --accent-dim: #1a1025;
+    --text: #e8e8e0;
+    --text-muted: #888;
+    --text-dim: #444;
+    --success: #4ade80;
+    --error: #f87171;
+    --error-bg: #1a0f0f;
+    --error-border: #3a1515;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 720px; width: 100%; position: relative; z-index: 1; }
+
+  .header { text-align: center; margin-bottom: 3rem; animation: fadeDown 0.6s ease both; }
+  .header-tag { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; display: block; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.2rem); font-weight: 700; letter-spacing: -0.03em; color: #fff; line-height: 1.1; }
+  h1 span { color: var(--accent); }
+  .subtitle { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.75rem; letter-spacing: 0.05em; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; margin-bottom: 1.25rem; animation: fadeUp 0.6s ease both; }
+  .card:nth-child(2) { animation-delay: 0.05s; }
+  .card:nth-child(3) { animation-delay: 0.1s; }
+
+  .upload-zone { border: 1.5px dashed var(--border); border-radius: 14px; padding: 2.5rem 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: var(--surface2); position: relative; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-dim); }
   .upload-zone input { display: none; }
-  .upload-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
-  .upload-text { font-size: 1rem; color: #888; margin-bottom: 0.5rem; }
-  .upload-text strong { color: #a78bfa; cursor: pointer; }
-  .upload-hint { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #444; }
-  .file-selected { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #a78bfa; margin-top: 1rem; }
-  .selects-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-  .language-select { width: 100%; padding: 0.75rem 1rem; background: #111; border: 1.5px solid #2a2a2a; border-radius: 12px; color: #e8e8e0; font-family: 'DM Mono', monospace; font-size: 0.85rem; cursor: pointer; transition: border-color 0.2s; }
-  .language-select:focus { outline: none; border-color: #a78bfa; }
-  .btn { width: 100%; padding: 1rem; background: #a78bfa; color: #0d0d0d; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; letter-spacing: 0.02em; }
-  .btn:hover { background: #c4b5fd; }
+  .upload-icon { font-size: 2.2rem; margin-bottom: 0.75rem; display: block; }
+  .upload-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+  .upload-text strong { color: var(--accent); cursor: pointer; }
+  .upload-hint { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-dim); }
+  .file-selected { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--accent); margin-top: 0.75rem; }
+
+  .selects-row { display: flex; gap: 1rem; margin-top: 1.25rem; }
+  .select-wrap { flex: 1; position: relative; }
+  .select-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
+  select { width: 100%; padding: 0.7rem 1rem; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.82rem; cursor: pointer; transition: border-color 0.2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.2rem; }
+  select:focus { outline: none; border-color: var(--accent); }
+
+  .btn-row { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+  .btn { flex: 1; padding: 0.9rem; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s, opacity 0.2s; letter-spacing: 0.02em; }
+  .btn-primary { background: var(--accent); color: #0d0d0d; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+  .btn-secondary:hover { background: var(--accent-dim); }
   .btn:active { transform: scale(0.98); }
-  .btn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
-  .result { margin-top: 2rem; background: #111; border: 1px solid #1e1e1e; border-radius: 16px; padding: 2rem; display: none; }
+  .btn:disabled { background: var(--border); color: #555; cursor: not-allowed; border-color: transparent; }
+
+  .progress-wrap { margin-top: 1.25rem; display: none; }
+  .progress-wrap.show { display: block; }
+  .progress-label { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .progress-bar-bg { height: 3px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 999px; width: 0%; transition: width 0.4s ease; }
+
+  .error { margin-top: 1rem; padding: 0.9rem 1.1rem; background: var(--error-bg); border: 1px solid var(--error-border); border-radius: 12px; color: var(--error); font-family: 'DM Mono', monospace; font-size: 0.78rem; display: none; }
+  .error.show { display: block; }
+
+  .result { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; display: none; animation: fadeUp 0.4s ease both; }
   .result.show { display: block; }
-  .result-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #1e1e1e; }
-  .result-filename { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #555; }
-  .result-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #a78bfa; background: #1a1025; padding: 0.3rem 0.75rem; border-radius: 999px; }
-  .copy-btn { margin-left: auto; padding: 0.4rem 1rem; background: transparent; border: 1px solid #a78bfa; color: #a78bfa; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
-  .copy-btn:hover { background: #a78bfa; color: #0d0d0d; }
-  .copy-btn.copied { border-color: #4ade80; color: #4ade80; }
-  .summary-text { font-size: 0.95rem; line-height: 1.8; color: #ccc; white-space: pre-wrap; }
-  .cursor { display: inline-block; width: 2px; height: 1em; background: #a78bfa; margin-left: 2px; animation: blink 0.8s infinite; vertical-align: text-bottom; }
+
+  .pdf-info { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .info-badge { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); padding: 0.35rem 0.7rem; border-radius: 8px; display: flex; align-items: center; gap: 0.35rem; }
+
+  .result-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .result-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); padding: 0.3rem 0.75rem; border-radius: 999px; }
+  .result-filename { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-dim); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .action-btns { display: flex; gap: 0.5rem; margin-left: auto; }
+  .icon-btn { padding: 0.35rem 0.85rem; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .icon-btn.copied { border-color: var(--success); color: var(--success); }
+
+  .summary-text { font-size: 0.92rem; line-height: 1.85; color: #ccc; white-space: pre-wrap; }
+  .bullet-line { display: flex; gap: 0.6rem; margin-bottom: 0.4rem; }
+  .bullet-dot { color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; }
+
+  .cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent); margin-left: 2px; animation: blink 0.8s infinite; vertical-align: text-bottom; }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-  .loader { display: none; text-align: center; padding: 2rem; }
-  .loader.show { display: block; }
-  .loader-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 1rem; }
-  .loader-dots span { width: 8px; height: 8px; background: #a78bfa; border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
+
+  .structured-result { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; display: none; animation: fadeUp 0.4s ease both; margin-top: 1.25rem; }
+  .structured-result.show { display: block; }
+  .structured-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+  .structured-category { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--accent); background: var(--accent-dim); padding: 0.25rem 0.65rem; border-radius: 999px; display: inline-block; margin-bottom: 1.25rem; }
+  .structured-section-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; margin-top: 1.25rem; }
+  .structured-summary { font-size: 0.92rem; line-height: 1.8; color: #ccc; }
+  .structured-meta { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .keywords-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .keyword-tag { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted); background: var(--surface2); border: 1px solid var(--border); padding: 0.3rem 0.65rem; border-radius: 6px; transition: border-color 0.2s, color 0.2s; }
+  .keyword-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  .history-section { margin-top: 2rem; display: none; animation: fadeUp 0.4s ease both; }
+  .history-section.show { display: block; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .history-title { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .history-clear { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-dim); background: none; border: none; cursor: pointer; transition: color 0.2s; }
+  .history-clear:hover { color: var(--error); }
+  .history-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: flex; align-items: center; gap: 1rem; }
+  .history-item:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .history-item-name { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-item-meta { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text-dim); white-space: nowrap; }
+  .history-item-style { font-size: 0.68rem; color: var(--accent); background: var(--accent-dim); padding: 0.2rem 0.5rem; border-radius: 999px; font-family: 'DM Mono', monospace; }
+
+  .loader-inline { display: none; padding: 1.5rem 0 0.5rem; text-align: center; }
+  .loader-inline.show { display: block; }
+  .loader-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 0.75rem; }
+  .loader-dots span { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
   .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-  .loader-text { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: #555; }
-  .error { margin-top: 1rem; padding: 1rem 1.25rem; background: #1a0f0f; border: 1px solid #3a1515; border-radius: 12px; color: #f87171; font-family: 'DM Mono', monospace; font-size: 0.8rem; display: none; }
-  .error.show { display: block; }
-  .pdf-info { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-  .info-badge { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #888; background: #161616; border: 1px solid #2a2a2a; padding: 0.4rem 0.75rem; border-radius: 8px; }
-  .info-badge span { color: #a78bfa; margin-right: 0.4rem; }
+  .loader-text { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-dim); }
+
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 540px) {
+    .selects-row { flex-direction: column; }
+    .btn-row { flex-direction: column; }
+    .action-btns { margin-left: 0; width: 100%; }
+    .result-header { flex-direction: column; align-items: flex-start; }
+    h1 { font-size: 2rem; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>PDF <span>Summarizer</span></h1>
-  <p class="subtitle">// powered by groq + mistral ocr</p>
 
-  <div class="upload-zone" id="dropZone">
-    <input type="file" id="fileInput" accept=".pdf">
-    <span class="upload-icon">📄</span>
-    <p class="upload-text">Drop your PDF here or <strong onclick="document.getElementById('fileInput').click()">browse</strong></p>
-    <p class="upload-hint">only .pdf files accepted</p>
-    <p class="file-selected" id="fileName"></p>
+  <div class="header">
+    <span class="header-tag">// AI-powered document analysis</span>
+    <h1>PDF <span>Summarizer</span></h1>
+    <p class="subtitle">powered by groq · mistral ocr · langchain</p>
   </div>
 
-  <div class="selects-row">
-    <select class="language-select" id="languageSelect">
-      <option value="English">🇬🇧 English</option>
-      <option value="Greek">🇬🇷 Greek</option>
-      <option value="Spanish">🇪🇸 Spanish</option>
-      <option value="French">🇫🇷 French</option>
-      <option value="German">🇩🇪 German</option>
-      <option value="Italian">🇮🇹 Italian</option>
-    </select>
+  <div class="card">
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".pdf">
+      <span class="upload-icon">📄</span>
+      <p class="upload-text">Drop your PDF here or <strong onclick="document.getElementById('fileInput').click()">browse</strong></p>
+      <p class="upload-hint">only .pdf files accepted</p>
+      <p class="file-selected" id="fileName"></p>
+    </div>
 
-    <select class="language-select" id="styleSelect">
-      <option value="bullet">📋 Bullet Points</option>
-      <option value="paragraph">📝 Paragraph</option>
-      <option value="executive">💼 Executive Summary</option>
-      <option value="eli5">🧒 ELI5</option>
-    </select>
-  </div>
+    <div class="selects-row">
+      <div class="select-wrap">
+        <span class="select-label">Language</span>
+        <select id="languageSelect">
+          <option value="English">🇬🇧 English</option>
+          <option value="Greek">🇬🇷 Greek</option>
+          <option value="Spanish">🇪🇸 Spanish</option>
+          <option value="French">🇫🇷 French</option>
+          <option value="German">🇩🇪 German</option>
+          <option value="Italian">🇮🇹 Italian</option>
+        </select>
+      </div>
+      <div class="select-wrap">
+        <span class="select-label">Style</span>
+        <select id="styleSelect">
+          <option value="bullet">📋 Bullet Points</option>
+          <option value="paragraph">📝 Paragraph</option>
+          <option value="executive">💼 Executive</option>
+          <option value="eli5">🧒 ELI5</option>
+        </select>
+      </div>
+    </div>
 
-  <button class="btn" id="submitBtn" disabled onclick="summarize()">Summarize</button>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label">
+        <span id="progressLabel">Analyzing document...</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
 
-  <div class="error" id="errorBox"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="submitBtn" disabled onclick="summarize()">Summarize</button>
+      <button class="btn btn-secondary" id="structuredBtn" disabled onclick="getStructured()">Get Structured</button>
+    </div>
 
-  <div class="loader" id="loader">
-    <div class="loader-dots"><span></span><span></span><span></span></div>
-    <p class="loader-text">analyzing your document...</p>
+    <div class="error" id="errorBox"></div>
   </div>
 
   <div class="result" id="result">
     <div class="pdf-info" id="pdfInfo">
-      <div class="info-badge"><span>📄</span><span id="infoPages"></span></div>
-      <div class="info-badge"><span>💾</span><span id="infoSize"></span></div>
-      <div class="info-badge"><span>🔤</span><span id="infoType"></span></div>
+      <div class="info-badge">📄 <span id="infoPages"></span></div>
+      <div class="info-badge">💾 <span id="infoSize"></span></div>
+      <div class="info-badge">🔤 <span id="infoType"></span></div>
     </div>
     <div class="result-header">
       <span class="result-label">Summary</span>
       <span class="result-filename" id="resultFilename"></span>
-      <button class="copy-btn" id="copyBtn" onclick="copySummary()">Copy</button>
-      <button class="copy-btn" onclick="downloadSummary()">Download</button>
+      <div class="action-btns">
+        <button class="icon-btn" id="copyBtn" onclick="copySummary()">Copy</button>
+        <button class="icon-btn" onclick="downloadSummary()">Download</button>
+      </div>
     </div>
-    <p class="summary-text" id="summaryText"></p>
+    <div class="summary-text" id="summaryText"></div>
   </div>
+
+  <div class="structured-result" id="structuredResult">
+    <div class="loader-inline" id="structuredLoader">
+      <div class="loader-dots"><span></span><span></span><span></span></div>
+      <p class="loader-text">extracting structured data...</p>
+    </div>
+    <div id="structuredContent" style="display:none">
+      <div class="structured-title" id="structTitle"></div>
+      <span class="structured-category" id="structCategory"></span>
+      <div class="structured-section-label">Summary</div>
+      <div class="structured-summary" id="structSummary"></div>
+      <div class="structured-section-label">Info</div>
+      <div class="structured-meta">
+        <div class="info-badge">📝 <span id="structLength"></span> words</div>
+      </div>
+      <div class="structured-section-label">Keywords</div>
+      <div class="keywords-wrap" id="structKeywords"></div>
+    </div>
+  </div>
+
+  <div class="history-section" id="historySection">
+    <div class="history-header">
+      <span class="history-title">// Session History</span>
+      <button class="history-clear" onclick="clearHistory()">Clear all</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
 </div>
 
 <script>
+  const history = [];
+  let currentSummary = '';
+  let currentFilename = '';
+
   const fileInput = document.getElementById('fileInput');
   const dropZone = document.getElementById('dropZone');
   const submitBtn = document.getElementById('submitBtn');
+  const structuredBtn = document.getElementById('structuredBtn');
   const fileName = document.getElementById('fileName');
 
   fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) {
-      fileName.textContent = '→ ' + fileInput.files[0].name;
-      submitBtn.disabled = false;
-    }
+    if (fileInput.files[0]) setFile(fileInput.files[0]);
   });
 
   dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
@@ -130,44 +287,87 @@
     const file = e.dataTransfer.files[0];
     if (file && file.name.endsWith('.pdf')) {
       fileInput.files = e.dataTransfer.files;
-      fileName.textContent = '→ ' + file.name;
-      submitBtn.disabled = false;
+      setFile(file);
     }
   });
+
+  function setFile(file) {
+    fileName.textContent = '→ ' + file.name;
+    submitBtn.disabled = false;
+    structuredBtn.disabled = false;
+    currentFilename = file.name;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !submitBtn.disabled && document.activeElement.tagName !== 'BUTTON') {
+      summarize();
+    }
+  });
+
+  let progressInterval = null;
+
+  function startProgress(label = 'Analyzing document...') {
+    const wrap = document.getElementById('progressWrap');
+    const fill = document.getElementById('progressFill');
+    const pct = document.getElementById('progressPct');
+    const lbl = document.getElementById('progressLabel');
+    wrap.classList.add('show');
+    lbl.textContent = label;
+    let val = 0;
+    fill.style.width = '0%';
+    pct.textContent = '0%';
+    progressInterval = setInterval(() => {
+      val = Math.min(val + Math.random() * 8, 88);
+      fill.style.width = val + '%';
+      pct.textContent = Math.round(val) + '%';
+    }, 300);
+  }
+
+  function finishProgress() {
+    clearInterval(progressInterval);
+    const fill = document.getElementById('progressFill');
+    const pct = document.getElementById('progressPct');
+    fill.style.width = '100%';
+    pct.textContent = '100%';
+    setTimeout(() => {
+      document.getElementById('progressWrap').classList.remove('show');
+      fill.style.width = '0%';
+    }, 600);
+  }
 
   async function summarize() {
     const file = fileInput.files[0];
     if (!file) return;
 
     document.getElementById('result').classList.remove('show');
+    document.getElementById('structuredResult').classList.remove('show');
     document.getElementById('errorBox').classList.remove('show');
-    document.getElementById('loader').classList.add('show');
-    document.getElementById('summaryText').textContent = '';
+    document.getElementById('summaryText').innerHTML = '';
     submitBtn.disabled = true;
+    structuredBtn.disabled = true;
+    startProgress('Analyzing document...');
 
     const formData = new FormData();
     formData.append('file', file);
-    const language = document.getElementById('languageSelect').value;
-    formData.append('language', language);
-    const style = document.getElementById('styleSelect').value;
-    formData.append('style', style);
+    formData.append('language', document.getElementById('languageSelect').value);
+    formData.append('style', document.getElementById('styleSelect').value);
 
     try {
       const res = await fetch('/summarize', { method: 'POST', body: formData });
 
       if (!res.ok) {
         const data = await res.json();
-        document.getElementById('loader').classList.remove('show');
-        const errorBox = document.getElementById('errorBox');
-        errorBox.textContent = '✗ ' + (data.detail || 'Something went wrong.');
-        errorBox.classList.add('show');
+        finishProgress();
+        showError(data.detail || 'Something went wrong.');
         submitBtn.disabled = false;
+        structuredBtn.disabled = false;
         return;
       }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
+      currentSummary = '';
 
       const summaryEl = document.getElementById('summaryText');
       const cursor = document.createElement('span');
@@ -186,7 +386,7 @@
           const json = JSON.parse(line.slice(6));
 
           if (json.type === 'info') {
-            document.getElementById('loader').classList.remove('show');
+            finishProgress();
             document.getElementById('resultFilename').textContent = json.filename;
             document.getElementById('infoPages').textContent = json.data.pages + ' pages';
             document.getElementById('infoSize').textContent = json.data.size;
@@ -194,45 +394,180 @@
             document.getElementById('result').classList.add('show');
             summaryEl.appendChild(cursor);
           } else if (json.type === 'token') {
+            currentSummary += json.data;
             summaryEl.insertBefore(document.createTextNode(json.data), cursor);
           } else if (json.type === 'done') {
             cursor.remove();
+            renderBullets(summaryEl, currentSummary);
+            saveToHistory(file.name, currentSummary, document.getElementById('styleSelect').value);
           }
         }
       }
     } catch (err) {
-      document.getElementById('loader').classList.remove('show');
-      const errorBox = document.getElementById('errorBox');
-      errorBox.textContent = '✗ Could not connect to the server.';
-      errorBox.classList.add('show');
+      finishProgress();
+      showError('Could not connect to the server.');
     }
 
     submitBtn.disabled = false;
+    structuredBtn.disabled = false;
+  }
+
+  function renderBullets(el, text) {
+    const style = document.getElementById('styleSelect').value;
+    if (style !== 'bullet') return;
+    const lines = text.split('\n');
+    el.innerHTML = '';
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) { el.appendChild(document.createElement('br')); continue; }
+      const bulletMatch = trimmed.match(/^([•\-\*]|\d+\.)\s+(.+)/);
+      if (bulletMatch) {
+        const wrap = document.createElement('div');
+        wrap.className = 'bullet-line';
+        const dot = document.createElement('span');
+        dot.className = 'bullet-dot';
+        dot.textContent = '▸';
+        const txt = document.createElement('span');
+        txt.textContent = bulletMatch[2];
+        wrap.appendChild(dot);
+        wrap.appendChild(txt);
+        el.appendChild(wrap);
+      } else {
+        const p = document.createElement('p');
+        p.style.marginBottom = '0.4rem';
+        p.textContent = trimmed;
+        el.appendChild(p);
+      }
+    }
+  }
+
+  async function getStructured() {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    document.getElementById('structuredResult').classList.add('show');
+    document.getElementById('structuredLoader').classList.add('show');
+    document.getElementById('structuredContent').style.display = 'none';
+    document.getElementById('errorBox').classList.remove('show');
+    submitBtn.disabled = true;
+    structuredBtn.disabled = true;
+    startProgress('Extracting structured data...');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/structured-summary', { method: 'POST', body: formData });
+      finishProgress();
+
+      if (!res.ok) {
+        const data = await res.json();
+        document.getElementById('structuredResult').classList.remove('show');
+        showError(data.detail || 'Structured extraction failed.');
+        submitBtn.disabled = false;
+        structuredBtn.disabled = false;
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById('structTitle').textContent = data.title;
+      document.getElementById('structCategory').textContent = data.category;
+      document.getElementById('structSummary').textContent = data.summary;
+      document.getElementById('structLength').textContent = data.summary_length;
+
+      const kwWrap = document.getElementById('structKeywords');
+      kwWrap.innerHTML = '';
+      for (const kw of data.keywords) {
+        const tag = document.createElement('span');
+        tag.className = 'keyword-tag';
+        tag.textContent = kw;
+        kwWrap.appendChild(tag);
+      }
+
+      document.getElementById('structuredLoader').classList.remove('show');
+      document.getElementById('structuredContent').style.display = 'block';
+
+    } catch (err) {
+      finishProgress();
+      document.getElementById('structuredResult').classList.remove('show');
+      showError('Could not connect to the server.');
+    }
+
+    submitBtn.disabled = false;
+    structuredBtn.disabled = false;
+  }
+
+  function saveToHistory(filename, summary, style) {
+    history.unshift({ filename, summary, style, time: new Date().toLocaleTimeString() });
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('historySection');
+    const list = document.getElementById('historyList');
+    if (history.length === 0) { section.classList.remove('show'); return; }
+    section.classList.add('show');
+    list.innerHTML = '';
+    for (let i = 0; i < history.length; i++) {
+      const item = history[i];
+      const el = document.createElement('div');
+      el.className = 'history-item';
+      el.innerHTML = `
+        <span class="history-item-name">📄 ${item.filename}</span>
+        <span class="history-item-style">${item.style}</span>
+        <span class="history-item-meta">${item.time}</span>
+      `;
+      el.onclick = () => restoreFromHistory(i);
+      list.appendChild(el);
+    }
+  }
+
+  function restoreFromHistory(i) {
+    const item = history[i];
+    currentSummary = item.summary;
+    document.getElementById('resultFilename').textContent = item.filename;
+    document.getElementById('infoPages').textContent = '—';
+    document.getElementById('infoSize').textContent = '—';
+    document.getElementById('infoType').textContent = item.style;
+    document.getElementById('result').classList.add('show');
+    const summaryEl = document.getElementById('summaryText');
+    summaryEl.innerHTML = '';
+    if (item.style === 'bullet') {
+      renderBullets(summaryEl, item.summary);
+    } else {
+      summaryEl.textContent = item.summary;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function clearHistory() {
+    history.length = 0;
+    renderHistory();
   }
 
   function copySummary() {
-    const text = document.getElementById('summaryText').textContent;
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(currentSummary).then(() => {
       const btn = document.getElementById('copyBtn');
       btn.textContent = 'Copied ✓';
       btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = 'Copy';
-        btn.classList.remove('copied');
-      }, 2000);
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
     });
   }
 
   function downloadSummary() {
-    const text = document.getElementById('summaryText').textContent;
-    const filename = document.getElementById('resultFilename').textContent;
-    const blob = new Blob([text], { type: 'text/plain' });
+    const blob = new Blob([currentSummary], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename.replace('.pdf', '_summary.txt');
+    a.download = currentFilename.replace('.pdf', '_summary.txt');
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = '✗ ' + msg;
+    box.classList.add('show');
   }
 </script>
 </body>
