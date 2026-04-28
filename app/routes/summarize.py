@@ -47,3 +47,31 @@ async def summarize(
         yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+from app.services.structured import get_structured_summary
+
+@router.post("/structured-summary")
+async def structured_summary(
+    file: UploadFile = File(...),
+):
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
+
+    pdf_bytes = await file.read()
+
+    text = extract_text_pymupdf(pdf_bytes)
+    if len(text.strip()) < 100:
+        try:
+            text = extract_text_mistral_ocr(pdf_bytes, file.filename)
+        except Exception as e:
+            raise HTTPException(status_code=422, detail=f"OCR failed: {e}")
+
+    if not text.strip():
+        raise HTTPException(status_code=422, detail="Could not extract any text from the PDF.")
+
+    result = await get_structured_summary(text)
+
+    return {
+        "filename": file.filename,
+        **result.model_dump()
+    }

@@ -12,8 +12,10 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 - 📦 **Chunking** for large PDFs that exceed the model's context window
 - ⚡ **Streaming** response — summary appears word by word
 - 🌍 **Language selection** — summarize in English, Greek, Spanish, French, German, Italian
-- 📊 **PDF Info** — pages, file size, and PDF type displayed
+- 🎨 **Summary style selection** — Bullet Points, Paragraph, Executive Summary, ELI5
+- 📊 **PDF Info** — pages, file size, and PDF type
 - 📋 **Copy button** — copy the summary with one click
+- 💾 **Download button** — download the summary as a `.txt` file
 - 🎨 **Custom dark mode UI**
 - 🐳 **Dockerized** for easy deployment
 
@@ -26,7 +28,7 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 3. If the PDF is scanned/image-based, **Mistral OCR** is used as fallback
 4. If the text is too large, it is split into **chunks** and each chunk is summarized separately
 5. The extracted text is sent to **Groq** (LLaMA 3.3 70B) via **LangChain**
-6. A concise bullet-point summary is **streamed** back word by word
+6. A summary is **streamed** back word by word in the selected language and style
 
 ---
 
@@ -46,7 +48,7 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 pdf-to-sum/
 ├── app/
 │   ├── prompts/
-│   │   └── templates.py    # Prompt templates
+│   │   └── templates.py    # Prompt templates per style
 │   ├── routes/
 │   │   └── summarize.py    # API endpoint
 │   ├── services/
