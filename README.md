@@ -1,6 +1,6 @@
-# 📄 AI PDF Summarizer API
+# 📄 AI PDF Summarizer
 
-A production-ready microservice that accepts a PDF file and returns a concise AI-generated summary. Built with FastAPI, LangChain, Groq, and Mistral OCR.
+A production-ready AI-powered PDF summarizer with user authentication. Built with FastAPI, LangChain, Groq, Mistral OCR, and Supabase.
 
 🚀 **Live Demo:** https://pdf-to-sum-production.up.railway.app
 
@@ -8,6 +8,7 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 
 ## ✨ Features
 
+- 🔐 **Authentication** — Sign Up / Sign In / Sign Out with email confirmation via Supabase
 - 📄 **Text-based PDF extraction** via PyMuPDF (fast, no API call)
 - 🔍 **OCR fallback** via Mistral for scanned/image-based PDFs
 - 🤖 **AI summarization** via Groq (LLaMA 3.3 70B) + LangChain
@@ -30,13 +31,14 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 
 ## 🧠 How it works
 
-1. User uploads a PDF via the web UI or the `/summarize` endpoint
-2. **PyMuPDF** tries to extract text directly (fast, no API call)
-3. If the PDF is scanned/image-based, **Mistral OCR** is used as fallback
-4. If the text is too large, it is split into **chunks** processed **in parallel** via `asyncio.gather()`
-5. The extracted text is sent to **Groq** (LLaMA 3.3 70B) via **LangChain**
-6. The summary is **streamed** back word by word in the selected language and style
-7. Optionally, **structured summary** can be requested via `/structured-summary`, returning a strictly typed JSON enforced by a Pydantic model and LangChain's `with_structured_output()`
+1. User registers and confirms their email via Supabase Auth
+2. After login, user uploads a PDF via the web UI or the `/summarize` endpoint
+3. **PyMuPDF** tries to extract text directly (fast, no API call)
+4. If the PDF is scanned/image-based, **Mistral OCR** is used as fallback
+5. If the text is too large, it is split into **chunks** processed **in parallel** via `asyncio.gather()`
+6. The extracted text is sent to **Groq** (LLaMA 3.3 70B) via **LangChain**
+7. The summary is **streamed** back word by word in the selected language and style
+8. Optionally, a **structured summary** can be requested via `/structured-summary`, returning a strictly typed JSON enforced by a Pydantic model and LangChain's `with_structured_output()`
 
 ---
 
@@ -50,6 +52,7 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 | LangChain + Groq | LLM orchestration & inference |
 | Pydantic | Structured output validation |
 | asyncio | Parallel chunk processing |
+| Supabase | Authentication & database |
 | Docker | Containerization |
 | Railway | Cloud deployment |
 
@@ -61,17 +64,21 @@ A production-ready microservice that accepts a PDF file and returns a concise AI
 pdf-to-sum/
 ├── app/
 │   ├── prompts/
-│   │   └── templates.py      # Prompt templates per style
+│   │   └── templates.py        # Prompt templates per style
 │   ├── routes/
-│   │   └── summarize.py      # API endpoints (/summarize, /structured-summary)
+│   │   ├── summarize.py        # API endpoints (/summarize, /structured-summary)
+│   │   └── auth.py             # Auth endpoints (/auth/signup, /auth/login)
 │   ├── services/
-│   │   ├── extractor.py      # PyMuPDF + Mistral OCR
-│   │   ├── summarizer.py     # Groq + LangChain + Parallel Chunking + Streaming
-│   │   └── structured.py     # Structured output via Pydantic + with_structured_output()
+│   │   ├── extractor.py        # PyMuPDF + Mistral OCR
+│   │   ├── summarizer.py       # Groq + LangChain + Parallel Chunking + Streaming
+│   │   ├── structured.py       # Structured output via Pydantic + with_structured_output()
+│   │   └── auth.py             # Supabase auth service
 │   └── __init__.py
 ├── static/
-│   └── index.html            # Dark mode web UI
-├── main.py                   # App initialization
+│   ├── index.html              # Main app UI (protected)
+│   ├── auth.html               # Login & Register UI
+│   └── confirmed.html          # Email confirmation page
+├── main.py                     # App initialization
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
@@ -94,4 +101,8 @@ The `/structured-summary` endpoint returns a strictly typed JSON enforced by Lan
 }
 ```
 
+---
+
 Visit **http://localhost:8000**
+
+
