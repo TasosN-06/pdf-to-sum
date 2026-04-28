@@ -24,12 +24,20 @@
 <div class="container">
   <span class="icon">✅</span>
   <h1>Email <span>Confirmed!</span></h1>
-  <p>Your account has been successfully verified.<br>You can now sign in and start summarizing your PDFs.</p>
+  <p>Your account has been successfully verified.<br>Redirecting to the app in <span id="countdown">3</span> seconds...</p>
   <a href="/auth" class="btn">Go to Sign In →</a>
 </div>
 <script>
-  // Auto redirect after 3 seconds
-  setTimeout(() => window.location.href = '/auth', 3000);
+  let seconds = 3;
+  const el = document.getElementById('countdown');
+  const interval = setInterval(() => {
+    seconds--;
+    el.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(interval);
+      window.location.href = '/auth';
+    }
+  }, 1000);
 </script>
 </body>
 </html>
