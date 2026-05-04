@@ -1,14 +1,25 @@
 FROM python:3.10-slim
 
-WORKDIR /app
+# Δημιούργησε non-root user (απαίτηση HF Spaces)
+RUN useradd -m -u 1000 user
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Set environment για τον user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
 
-COPY main.py .
-COPY app/ ./app/
-COPY static/ ./static/
+WORKDIR /home/user/app
 
-EXPOSE 8000
+# Εγκατάσταση dependencies ως user
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Copy κώδικα με σωστά permissions
+COPY --chown=user main.py .
+COPY --chown=user app/ ./app/
+COPY --chown=user static/ ./static/
+
+USER user
+
+EXPOSE 7860
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
